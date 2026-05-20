@@ -4,7 +4,7 @@ Tekno Finals is a 2D Java game about surviving the semesters at CIT-U. Players c
 
 ---
 
-## 🚀 Features
+##  Features
 
 * **4 Academic Stages:** Play through Prelim, Midterm, Pre-Final, and Finals against bosses: Contreras, Bolabola, Abadinas, and the final boss, Taboada.
 * **Smooth 8-Way Movement:** Move smoothly in any direction. The character speed automatically adjusts to fit your monitor's resolution, so it feels the same on any screen.
@@ -20,7 +20,7 @@ Tekno Finals is a 2D Java game about surviving the semesters at CIT-U. Players c
 
 ---
 
-## 🎮 Controls
+##  Controls
 
 | Key | Action |
 | :--- | :--- |
@@ -32,7 +32,7 @@ Tekno Finals is a 2D Java game about surviving the semesters at CIT-U. Players c
 
 ---
 
-## 🛠️ System Architecture
+##  System Architecture
 
 The project splits the game code up using OOP ideas to keep everything clean:
 
