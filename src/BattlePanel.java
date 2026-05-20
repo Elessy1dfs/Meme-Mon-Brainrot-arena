@@ -9,18 +9,22 @@ import javax.swing.*;
  
 public class BattlePanel extends JPanel {
     private final BattleManager manager;
-    private final Runnable backToMenu;
+    private final Runnable backToMenu; 
     private Image playerWeaponImg, enemyWeaponImg, victoryImg, defeatedImg, hpPotionImg, manaPotionImg;
     private Image[] backgrounds = new Image[5];
     private boolean facingRight = true;
     private final Set<Integer> pressedKeys = new HashSet<>();
+    
+    // Mga variable para sa zoom animation sa game over screen
+    private double gameOverScale = 0.1; 
+    private boolean zoomResetDone = false; 
  
     public BattlePanel(BattleManager manager, Runnable backToMenu) {
         this.manager = manager;
         this.backToMenu = backToMenu;
         this.setFocusable(true);
         this.setLayout(new BorderLayout());
-       
+        
         try {
             playerWeaponImg = ImageIO.read(new File("assets/img/pencil.png"));
             enemyWeaponImg = ImageIO.read(new File("assets/img/book.png"));
@@ -32,7 +36,9 @@ public class BattlePanel extends JPanel {
             backgrounds[2] = ImageIO.read(new File("assets/img/midterm_bg.png"));
             backgrounds[3] = ImageIO.read(new File("assets/img/prefinal_bg.png"));
             backgrounds[4] = ImageIO.read(new File("assets/img/final_bg.png"));
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { 
+            System.out.println("⚠️ Naay missing nga imahe sa BattlePanel: " + e.getMessage());
+        }
  
         addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
@@ -41,7 +47,11 @@ public class BattlePanel extends JPanel {
                 if (e.getKeyCode() == KeyEvent.VK_P) manager.isPaused = !manager.isPaused;
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (manager.isWaitingForNextStage) { manager.currentStage++; manager.spawnNextEnemy(); }
-                    else if (manager.isGameOver) manager.resetGame();
+                    else if (manager.isGameOver) {
+                        gameOverScale = 0.1;
+                        zoomResetDone = false;
+                        manager.resetGame();
+                    }
                 }
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE && (manager.isGameOver || manager.isPaused)) backToMenu.run();
             }
@@ -54,17 +64,29 @@ public class BattlePanel extends JPanel {
                 manager.updateAI();
                 manager.player.frameIndex = (manager.player.frameIndex + 1) % 4;
                 manager.bot.frameIndex = (manager.bot.frameIndex + 1) % 4;
+                zoomResetDone = false; 
+            } else if (manager.isGameOver) {
+                if (gameOverScale < 1.0) {
+                    gameOverScale += 0.05; 
+                    if (gameOverScale > 1.0) gameOverScale = 1.0;
+                }
             }
             repaint();
         }).start();
     }
  
+    
     private void handleJoystickMovement() {
-        int dx = 0, dy = 0, speed = 15;
+        int dx = 0, dy = 0;
+        
+   
+        int speed = (getWidth() > 0) ? Math.max(10, (int)(getWidth() * 0.0125)) : 15;
+        
         if (pressedKeys.contains(KeyEvent.VK_LEFT)) { dx -= speed; facingRight = false; }
         if (pressedKeys.contains(KeyEvent.VK_RIGHT)) { dx += speed; facingRight = true; }
         if (pressedKeys.contains(KeyEvent.VK_UP)) dy -= speed;
         if (pressedKeys.contains(KeyEvent.VK_DOWN)) dy += speed;
+        
         manager.player.move(dx, dy);
     }
  
@@ -72,6 +94,7 @@ public class BattlePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        
         if (backgrounds[manager.currentStage] != null) g2.drawImage(backgrounds[manager.currentStage], 0, 0, getWidth(), getHeight(), null);
  
         g2.setColor(Color.YELLOW);
@@ -87,7 +110,7 @@ public class BattlePanel extends JPanel {
         if (manager.player.projectileActive) {
             g2.drawImage(playerWeaponImg, manager.player.projX, manager.player.projY, 50, 50, null);
         }
-       
+        
         for (EnemyProjectile ep : manager.enemyProjectiles) {
             Image currentProj = ep.isEnemy ? enemyWeaponImg : playerWeaponImg;
             g2.drawImage(currentProj, ep.x, ep.y, 65, 65, null);
@@ -105,17 +128,25 @@ public class BattlePanel extends JPanel {
         if (manager.isWaitingForNextStage) {
             drawOverlay(g2, "YOU PASSED!", "Press ENTER to continue", Color.GREEN);
         }
+        
         if (manager.isGameOver) {
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             Image res = manager.playerWon ? victoryImg : defeatedImg;
-           
-            // Misalida na gyud sa tibuok screen (0, 0, width, height) para walay black bars
-            g2.drawImage(res, 0, 0, getWidth(), getHeight(), null);
-           
-            // Giduso og gamay pataas ang text (getHeight() - 120) aron dili matabunan sa Windows Taskbar
-            g2.setFont(new Font("Arial Black", Font.BOLD, 28));
-            g2.setColor(Color.WHITE);
-            String sub = "ENTER to Restart | ESC for Menu";
-            g2.drawString(sub, (getWidth() - g2.getFontMetrics().stringWidth(sub))/2, getHeight() - 120);
+            
+            if (res != null) {
+                int imgWidth = (int) (getWidth() * gameOverScale);
+                int imgHeight = (int) (getHeight() * gameOverScale);
+                int x = (getWidth() - imgWidth) / 2;
+                int y = (getHeight() - imgHeight) / 2;
+                g2.drawImage(res, x, y, imgWidth, imgHeight, null);
+            }
+            
+            if (gameOverScale >= 0.8) {
+                g2.setFont(new Font("Arial Black", Font.BOLD, 28)); 
+                g2.setColor(Color.WHITE);
+                String sub = "ENTER to Restart | ESC for Menu";
+                g2.drawString(sub, (getWidth() - g2.getFontMetrics().stringWidth(sub))/2, getHeight() - 120);
+            }
         }
     }
  
@@ -137,9 +168,9 @@ public class BattlePanel extends JPanel {
             g2.drawImage(img, p.x + 128, p.y, -128, 128, null);
         }
  
-        if (isBoss && p.isShielded) {
-            g2.setColor(new Color(0, 255, 255, 100));
-            g2.fillOval(p.x, p.y, 128, 128);
+        if (isBoss && p.isShielded) { 
+            g2.setColor(new Color(0, 255, 255, 100)); 
+            g2.fillOval(p.x, p.y, 128, 128); 
         }
     }
  
@@ -158,22 +189,22 @@ public class BattlePanel extends JPanel {
     }
  
     private String getStageTitle(int s) {
-        switch(s) {
-            case 1: return "PRELIM: CONTRERAS";
-            case 2: return "MIDTERM: BOLABOLA";
-            case 3: return "PRE-FINAL: ABADINAS";
-            case 4: return "FINALS: TABOADA";
-            default: return "";
+        switch(s) { 
+            case 1: return "PRELIM: CONTRERAS"; 
+            case 2: return "MIDTERM: BOLABOLA"; 
+            case 3: return "PRE-FINAL: ABADINAS"; 
+            case 4: return "FINALS: TABOADA"; 
+            default: return ""; 
         }
     }
  
     private String getSkillText(int s) {
-        switch(s) {
-            case 1: return "PASSIVE: REGEN";
-            case 2: return "SKILL: 4-WAY";
-            case 3: return "PASSIVE: STEALTH";
-            case 4: return "PASSIVE: SHIELD";
-            default: return "";
+        switch(s) { 
+            case 1: return "PASSIVE: REGEN"; 
+            case 2: return "SKILL: 4-WAY"; 
+            case 3: return "PASSIVE: STEALTH"; 
+            case 4: return "PASSIVE: SHIELD"; 
+            default: return ""; 
         }
     }
 }
