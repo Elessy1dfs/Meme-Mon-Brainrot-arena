@@ -1,61 +1,87 @@
-# Meme-mon: Academic Brainrot Arena
+# Tekno Finals
 
-**Meme-mon: Academic Brainrot Arena** is a high-octane, Java-based 2D gauntlet featuring a 2026 "Brainrot" aesthetic. Navigate the grueling semesters of CIT-U by battling legendary teacher-bosses in a neon-glitch arena. Built with advanced **Object-Oriented Programming (OOP)** principles, the game features a multi-stage progression system, 8-way joystick movement, and unique boss passives.
+Tekno Finals is a 2D Java game about surviving the semesters at CIT-U. Players control the CIT-U Wildcat, representing the student body, fighting through tough exams set by legendary teachers. Built using Object-Oriented Programming (OOP) principles, the game features a multi-stage boss system, 8-way movement, and custom teacher skills.
 
 ---
 
-##  Features
+## 🚀 Features
 
-* **Academic Gauntlet (4 Stages)**: Battle through **Prelim**, **Midterm**, **Pre-Final**, and **Finals** against legendary bosses: Contreras, Bolabola, Abadinas, and the final boss, Taboada.
-* **Joystick Movement**: Support for 8-way diagonal movement using a synchronized key-pressed system.
-* **Directional Ranged Combat**: Fire plasma balls that travel in the direction your character is facing.
-* **Boss Passive Skills**:
-    * **Contreras**: Passive HP regeneration every 3 seconds.
-    * **Bolabola**: 4-way plasma burst after every 3 attacks.
-    * **Abadinas**: Stealth camo (invisibility) for 2 seconds every 4 seconds.
-    * **Taboada**: Divine Shield (damage immunity) and health regeneration for 3 seconds every 4 seconds.
-* **Resource System**: Manage a **Mana Bar** to fire projectiles; scavenging for **HP/Mana Potions** that spawn randomly near the player every 4 seconds.
-* **Row-Based Animations**: Dynamic sprite switching between **Idle** (Row 1), **Attack** (Row 2), and **Hit** (Row 3) states based on game logic.
-* **Responsive UI**: Stretched background rendering and centered HUD elements that adapt to full-screen/maximized windows.
-* ---
+* **4 Academic Stages:** Play through Prelim, Midterm, Pre-Final, and Finals against bosses: Contreras, Bolabola, Abadinas, and the final boss, Taboada.
+* **Smooth 8-Way Movement:** Move smoothly in any direction. The character speed automatically adjusts to fit your monitor's resolution, so it feels the same on any screen.
+* **Ranged Attacks:** Fire energy balls that travel the same way your character is facing.
+* **Animated Game Over Screen:** When you win or lose, the victory or defeat banner zooms in smoothly from the center of the screen.
+* **Teacher Boss Skills:**
+  * **Contreras:** Heals himself slightly every 3 seconds.
+  * **Bolabola:** Shoots projectiles in 4 directions after every 3 attacks.
+  * **Abadinas:** Turns invisible for 2 seconds out of every 4 seconds.
+  * **Taboada:** Gains a shield (damage immunity) and heals for 3 seconds out of every 4 seconds.
+* **Items & Mana:** Use Mana to shoot projectiles. Pick up HP and Mana potions that drop near you every 4 seconds.
+* **Sprite Animations:** Automatically cycles through Idle, Attack, and Hit sprite states based on what you are doing.
 
-##  Controls
+---
+
+## 🎮 Controls
 
 | Key | Action |
 | :--- | :--- |
-| **Arrow Keys** | 8-Way Joystick Movement (Up, Down, Left, Right, Diagonals) |
-| **Spacebar** | Fire Plasma Ball (Costs 20 Mana) |
-| **Escape** | Exit Game (via Main Menu) |
+| **Arrow Keys** | 8-Way Movement (Up, Down, Left, Right, Diagonals) |
+| **Spacebar** | Shoot Energy Ball (Costs 20 Mana) |
+| **P** | Pause / Unpause the game |
+| **Enter** | Next Stage (If you win) / Restart Level (If you lose) |
+| **Escape** | Go back to the Main Menu (When Paused or Game Over) |
 
 ---
-##  System Architecture
 
-The project adheres to strict OOP concepts to manage complex game states:
+## 🛠️ System Architecture
 
-* **Pet.java (Abstraction)**: An abstract base class defining core combatant properties, including health, mana, and row-based animation logic.
-* **BattleManager.java (Encapsulation/State)**: The "Director" class. It handles stage transitions, boss spawning, potion drops, and the physics of all projectiles.
-* **BattlePanel.java (View/Controller)**: Manages 8-way input tracking, renders the current academic stage background, and handles the centered UI/HUD.
-* **MainMenu.java**: A transparent, neon-styled entry point for starting the exam gauntlet.
+The project splits the game code up using OOP ideas to keep everything clean:
+
+* **`Pet.java`:** The base class for all characters. It holds basic stats like health, mana, and changes the animation frames.
+* **`BattleManager.java`:** The brain of the game logic. It manages stages, enemy spawns, potion drops, and checks if bullets hit targets.
+* **`BattlePanel.java`:** Handles player inputs from the keyboard, draws the backgrounds, and displays the player HUD (HP/Mana bars).
+* **`MainMenu.java`:** The home screen where you can click buttons to start the exam or exit the game.
+
+### Use Case Diagram
+![Use Case Diagram](assets/img/usecase_diagram.png)
+
+### Class Diagram
+![Class Diagram](assets/img/class_diagram.png)
 
 ---
-##  Getting Started
+
+## Getting Started
 
 ### Prerequisites
+
+* Java JDK 17 or higher.
+* An IDE (VS Code, IntelliJ IDEA, or Eclipse).
+
+## Getting Started
+
+### Prerequisites
+
 * **Java JDK 17** or higher.
-* An **IDE** (IntelliJ IDEA, Eclipse, or NetBeans).
+* An IDE (IntelliJ IDEA, Eclipse, or NetBeans).
 
 ### Installation
-1.  **Clone the repository**:
-    ```bash
-    git clone [https://github.com/Elessy1dfs/Meme-Mon-Brainrot-arena.git](https://github.com/Elessy1dfs/Meme-Mon-Brainrot-arena.git)
-    ```
-2.  **Verify Assets**: Ensure the following `.png` files are in the **root directory** (not inside `/src`):
-    * **Bosses**: `contreras.png`, `bolabola.png`, `abadinas.png`, `taboada.png`.
-    * **Backgrounds**: `prelim_bg.png`, `midterm_bg.png`, `prefinal_bg.png`, `final_bg.png`, `menu_bg.png`.
-    * **Sprites/FX**: `sigma_sheet.png`, `plasma_ball.png`, `hp_potion.png`, `mana_potion.png`.
-    * **Results**: `victory.png`, `defeated.png`.
-3.  **Run the Game**: Open the project in your IDE, compile, and execute `MemeMonGame.java`.
 
----
-## 🎓 Academic Context
-Developed as a project for **Object-Oriented Programming 2 (OOP2)** at **Cebu Institute of Technology – University**.
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/Elessy1dfs/Meme-Mon-Brainrot-arena.git](https://github.com/Elessy1dfs/Tekno_Finals.git)
+
+
+2. Verify Assets: Ensure the following .png files are in the root directory (not inside /src):
+
+* **Bosses**: contreras.png, bolabola.png, abadinas.png, taboada.png.
+
+* **Backgrounds**: prelim_bg.png, midterm_bg.png, prefinal_bg.png, final_bg.png, menu_bg.png.
+
+* **Sprites/FX**: sigma_sheet.png, pencil.png, book.png, hp_potion.png, mana_potion.png.
+
+* **Results**: victory.png, defeated.png.
+
+3. Run the Game: Open the project in your IDE, compile, and execute MemeMonGame.java.
+
+
+### Academic Context
+Created as a final project for Object-Oriented Programming 2 (OOP2) at Cebu Institute of Technology – University.
