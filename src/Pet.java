@@ -69,7 +69,10 @@ public abstract class Pet {
         int colWidth = spriteSheet.getWidth() / 4;
         int rowHeight = spriteSheet.getHeight() / 3;
         int startY = state * rowHeight;
-        int yOffset = 40;
+        
+        // Removed the 40px offset so the full height of the sprite is drawn
+        int yOffset = 0; 
+        
         return spriteSheet.getSubimage(frameIndex * colWidth, startY + yOffset, colWidth, rowHeight - yOffset);
     }
 }
