@@ -49,6 +49,7 @@ public class BattleManager {
         isWaitingForNextStage = false;
         player.hp = player.maxHp;
         player.mana = player.maxMana;
+        player.state = 0;
         spawnNextEnemy();
     }
  
@@ -87,7 +88,7 @@ public class BattleManager {
             if (player.projX > 2500 || player.projX < -300) { player.projectileActive = false; t.stop(); }
         });
         t.start();
-        new Timer(450, e -> { if(player.state != 2) player.state = 0; }).start();
+        new Timer(450, e -> { if(player.state == 1) player.state = 0; }).start();
     }
  
     public void updateAI() {
@@ -102,7 +103,7 @@ public class BattleManager {
             enemyProjectiles.add(new EnemyProjectile(bot.x + 40, bot.y + 40, bot.faceDir, 0, true));
             lastEnemyShootTime = now;
             bot.attackCount++;
-            new Timer(450, e -> { if(bot.state != 2) bot.state = 0; }).start();
+            new Timer(450, e -> { if(bot.state == 1) bot.state = 0; }).start();
         }
  
         for (int i = enemyProjectiles.size() - 1; i >= 0; i--) {
