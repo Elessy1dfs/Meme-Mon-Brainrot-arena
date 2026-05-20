@@ -117,9 +117,39 @@ public class BattlePanel extends JPanel {
     private void drawPet(Graphics2D g2, Pet p, boolean right, boolean isBoss) {
         BufferedImage img = p.getCurrentFrame();
         if (img == null) return;
-        if (right) g2.drawImage(img, p.x, p.y, 128, 128, null);
-        else g2.drawImage(img, p.x + 128, p.y, -128, 128, null);
-        if (isBoss && p.isShielded) { g2.setColor(new Color(0, 255, 255, 100)); g2.fillOval(p.x, p.y, 128, 128); }
+
+        // Custom cut-out logic strictly applied to the player (Sigma) character
+        if (!isBoss) {
+            int totalHeight = img.getHeight();
+            int headSectionHeight = totalHeight / 3; // Isolate the upper mask graphic area
+            
+            // Pushes the head sub-image down into the collar line
+            int yAlignmentOffset = 14; 
+
+            BufferedImage headPart = img.getSubimage(0, 0, img.getWidth(), headSectionHeight);
+            BufferedImage bodyPart = img.getSubimage(0, headSectionHeight, img.getWidth(), totalHeight - headSectionHeight);
+
+            double scaleRatio = 128.0 / img.getHeight();
+            int scaledHeadH = (int) (headSectionHeight * scaleRatio);
+            int scaledBodyH = 128 - scaledHeadH;
+
+            if (right) {
+                g2.drawImage(headPart, p.x, p.y + yAlignmentOffset, 128, scaledHeadH, null);
+                g2.drawImage(bodyPart, p.x, p.y + scaledHeadH, 128, scaledBodyH, null);
+            } else {
+                g2.drawImage(headPart, p.x + 128, p.y + yAlignmentOffset, -128, scaledHeadH, null);
+                g2.drawImage(bodyPart, p.x + 128, p.y + scaledHeadH, -128, scaledBodyH, null);
+            }
+        } else {
+            // Unchanged standard rendering for the teacher boss sprites
+            if (right) g2.drawImage(img, p.x, p.y, 128, 128, null);
+            else g2.drawImage(img, p.x + 128, p.y, -128, 128, null);
+        }
+
+        if (isBoss && p.isShielded) { 
+            g2.setColor(new Color(0, 255, 255, 100)); 
+            g2.fillOval(p.x, p.y, 128, 128); 
+        }
     }
  
     private void drawUI(Graphics2D g, Pet p, boolean isPlayer) {
