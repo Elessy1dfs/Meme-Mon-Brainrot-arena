@@ -37,7 +37,7 @@ public class BattlePanel extends JPanel {
             backgrounds[3] = ImageIO.read(new File("assets/img/prefinal_bg.png"));
             backgrounds[4] = ImageIO.read(new File("assets/img/final_bg.png"));
         } catch (Exception e) { 
-            System.out.println("⚠️ Naay missing nga imahe sa BattlePanel: " + e.getMessage());
+            System.out.println("⚠️ Image Missing " + e.getMessage());
         }
  
         addKeyListener(new KeyAdapter() {
